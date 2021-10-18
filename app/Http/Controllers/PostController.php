@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Post;
+
+use App\Http\Resources\PostResource;
+
 class PostController extends Controller
 {
     /**
@@ -13,7 +17,15 @@ class PostController extends Controller
      */
     public function index()
     {
-        return "Hallo ini dari Get Resource";
+        $posts = Post::all();
+
+        $response = [
+            'success' => true,
+            'data' => PostResource::collection($posts),
+            'message' => 'Post Succesfully Retrieved'
+        ];
+
+        return response()->json($response, 200);
     }
 
     /**
