@@ -24,7 +24,8 @@ class PostController extends Controller
         $response = [
             'success' => true,
             'data' => PostResource::collection($posts),
-            'message' => 'Post Succesfully Retrieved'
+            'message' => 'Post Succesfully Retrieved',
+            'testing' => $this->testing("Hello World")
         ];
 
         return response()->json($response, 200);
@@ -57,7 +58,7 @@ class PostController extends Controller
 
         if($validator->fails()) {
             $response = [
-                'success' => true,
+                'success' => false,
                 'message' => $validator->errors()
             ];
 
@@ -83,7 +84,24 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::find($id);
+
+        if(is_null($post)) {
+            $response = [
+                'success' => false,
+                'message' => "Post Not Found"
+            ];
+
+            return response()->json($response, 403);
+        }
+
+        $response = [
+            'success' => true,
+            'data' => new PostResource($post),
+            'message' => 'Post Succesfully Retrieved'
+        ];
+
+        return response()->json($response, 200);
     }
 
     /**
@@ -104,9 +122,35 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        $input = $request->all();
+
+        $validator = Validator::make($input, [
+            'title' => 'required',
+            'content' => 'required'
+        ]);
+
+        if($validator->fails()) {
+            $response = [
+                'success' => false,
+                'message' => $validator->errors()
+            ];
+
+            return response()->json($response, 403);
+        }
+
+        $post->title = $input['title'];
+        $post->content = $input['content'];
+        $post->save();
+
+        $response = [
+            'success' => true,
+            'data' => new PostResource($post),
+            'message' => 'Post Succesfully Updated'
+        ];
+
+        return response()->json($response, 200);
     }
 
     /**
@@ -115,8 +159,16 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        $post->delete();
+
+        $response = [
+            'success' => true,
+            'data' => [],
+            'message' => 'Post Succesfully Deleted'
+        ];
+
+        return response()->json($response, 200);
     }
 }
