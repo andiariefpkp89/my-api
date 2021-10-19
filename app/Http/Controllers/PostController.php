@@ -21,24 +21,7 @@ class PostController extends Controller
     {
         $posts = Post::all();
 
-        $response = [
-            'success' => true,
-            'data' => PostResource::collection($posts),
-            'message' => 'Post Succesfully Retrieved',
-            'testing' => $this->testing("Hello World")
-        ];
-
-        return response()->json($response, 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return $this->successResponse(PostResource::collection($posts), 'Post Succesfully Retrieved');
     }
 
     /**
@@ -57,23 +40,12 @@ class PostController extends Controller
         ]);
 
         if($validator->fails()) {
-            $response = [
-                'success' => false,
-                'message' => $validator->errors()
-            ];
-
-            return response()->json($response, 403);
+            return $this->errorResponse('Validation Error', $validator->errors());
         }
 
         $post = Post::create($input);
 
-        $response = [
-            'success' => true,
-            'data' => new PostResource($post),
-            'message' => 'Post Succesfully Created'
-        ];
-
-        return response()->json($response, 200);
+        return $this->successResponse(new PostResource($post), 'Post Succesfully Created');
     }
 
     /**
@@ -87,32 +59,10 @@ class PostController extends Controller
         $post = Post::find($id);
 
         if(is_null($post)) {
-            $response = [
-                'success' => false,
-                'message' => "Post Not Found"
-            ];
-
-            return response()->json($response, 403);
+            return $this->errorResponse('Post Not Found');
         }
 
-        $response = [
-            'success' => true,
-            'data' => new PostResource($post),
-            'message' => 'Post Succesfully Retrieved'
-        ];
-
-        return response()->json($response, 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return $this->successResponse(new PostResource($post), 'Post Succesfully Retrieved');
     }
 
     /**
@@ -132,25 +82,14 @@ class PostController extends Controller
         ]);
 
         if($validator->fails()) {
-            $response = [
-                'success' => false,
-                'message' => $validator->errors()
-            ];
-
-            return response()->json($response, 403);
+            return $this->errorResponse('Validation Error', $validator->errors());
         }
 
         $post->title = $input['title'];
         $post->content = $input['content'];
         $post->save();
 
-        $response = [
-            'success' => true,
-            'data' => new PostResource($post),
-            'message' => 'Post Succesfully Updated'
-        ];
-
-        return response()->json($response, 200);
+        return $this->successResponse(new PostResource($post), 'Post Succesfully Updated');
     }
 
     /**
@@ -163,12 +102,6 @@ class PostController extends Controller
     {
         $post->delete();
 
-        $response = [
-            'success' => true,
-            'data' => [],
-            'message' => 'Post Succesfully Deleted'
-        ];
-
-        return response()->json($response, 200);
+        return $this->successResponse( [], 'Post Succesfully Created');
     }
 }

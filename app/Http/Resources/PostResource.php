@@ -18,8 +18,8 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'judul' => $this->title,
             'content' => $this->content,
-            'pesanDariSaya' => "Hellow......",
-            'created_at' => $this->created_at->format('d/m/Y')
+            'created_at' => $this->created_at->format('d/m/Y'),
+            'updated_at' => $this->updated_at->format('d/m/Y')
         ];
     }
 }
